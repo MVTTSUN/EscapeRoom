@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { BrowserRoute } from '../../const';
 
 export function Header() {
   const { pathname } = useLocation();
@@ -13,7 +14,7 @@ export function Header() {
             </svg>
           </span>
         ) : (
-          <Link className="logo header__logo" to="/" aria-label="Перейти на Главную">
+          <Link className="logo header__logo" to={BrowserRoute.Main} aria-label="Перейти на Главную">
             <svg width="134" height="52" aria-hidden="true">
               <use xlinkHref="#logo"></use>
             </svg>

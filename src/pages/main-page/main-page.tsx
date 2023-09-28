@@ -1,17 +1,33 @@
-import { ChangeEvent, useState } from 'react';
-import { LEVELS_QUESTS, TYPES_QUESTS } from '../../const';
+import { ChangeEvent, useEffect } from 'react';
+import { BrowserRoute, LEVELS_QUESTS, TYPES_QUESTS } from '../../const';
+import { useAppDispatch } from '../../hooks/use-app-dispatch';
+import { getQuestsAction } from '../../store/api-actions';
+import { useAppSelector } from '../../hooks/use-app-selector';
+import { getFilteredQuests, getLevelQuest, getTypeQuest } from '../../store/quests-data/selectors';
+import { Link } from 'react-router-dom';
+import { resetTypeAndLevel, setLevelQuest, setTypeQuest } from '../../store/quests-data/quests-data';
 
 export function MainPage() {
-  const [typeQuest, setTypeQuest] = useState<string>(TYPES_QUESTS[0].id);
-  const [levelQuest, setLevelQuest] = useState<string>(LEVELS_QUESTS[0].id);
+  const dispatch = useAppDispatch();
+  const typeQuest = useAppSelector(getTypeQuest);
+  const levelQuest = useAppSelector(getLevelQuest);
+  const filteredQuests = useAppSelector(getFilteredQuests);
 
   const onChangeTypeQuest = (e: ChangeEvent<HTMLInputElement>) => {
-    setTypeQuest(e.target.id);
+    dispatch(setTypeQuest(e.target.id));
   };
 
   const onChangeLevelQuest = (e: ChangeEvent<HTMLInputElement>) => {
-    setLevelQuest(e.target.id);
+    dispatch(setLevelQuest(e.target.id));
   };
+
+  useEffect(() => {
+    dispatch(getQuestsAction());
+
+    return () => {
+      dispatch(resetTypeAndLevel());
+    };
+  }, []);
 
   return (
     <main className="page-content">
@@ -54,150 +70,33 @@ export function MainPage() {
         </div>
         <h2 className="title visually-hidden">Выберите квест</h2>
         <div className="cards-grid">
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/crypt/crypt-size-s.webp, img/content/crypt/crypt-size-s@2x.webp 2x"/>
-                <img src="img/content/crypt/crypt-size-s.jpg" srcSet="img/content/crypt/crypt-size-s@2x.jpg 2x" width="344" height="232" alt="Мужчина в клетке в подземелье."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">Склеп</a>
+          {filteredQuests.map((quest) => (
+            <div key={quest.id} className="quest-card">
+              <div className="quest-card__img">
+                <picture>
+                  <source type="image/webp" srcSet={quest.previewImgWebp}/>
+                  <img src={quest.previewImg} width="344" height="232" alt={quest.title}/>
+                </picture>
               </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>2&ndash;5&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Сложный
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/maniac/maniac-size-s.webp, img/content/maniac/maniac-size-s@2x.webp 2x"/>
-                <img src="img/content/maniac/maniac-size-s.jpg" srcSet="img/content/maniac/maniac-size-s@2x.jpg 2x" width="344" height="232" alt="Мужчина в маске в тёмном переходе."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">Маньяк</a>
+              <div className="quest-card__content">
+                <div className="quest-card__info-wrapper">
+                  <Link className="quest-card__link" to={`${BrowserRoute.Quest}/${quest.id}`}>{quest.title}</Link>
+                </div>
+                <ul className="tags quest-card__tags">
+                  <li className="tags__item">
+                    <svg width="11" height="14" aria-hidden="true">
+                      <use xlinkHref="#icon-person"></use>
+                    </svg>{quest.peopleMinMax[0]}&ndash;{quest.peopleMinMax[1]}&nbsp;чел
+                  </li>
+                  <li className="tags__item">
+                    <svg width="14" height="14" aria-hidden="true">
+                      <use xlinkHref="#icon-level"></use>
+                    </svg>{quest.level}
+                  </li>
+                </ul>
               </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>3&ndash;6&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Средний
-                </li>
-              </ul>
             </div>
-          </div>
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/ritual/ritual-size-s.webp, img/content/ritual/ritual-size-s@2x.webp 2x"/>
-                <img src="img/content/ritual/ritual-size-s.jpg" srcSet="img/content/ritual/ritual-size-s@2x.jpg 2x" width="344" height="232" alt="Череп и горящая свеча в тёмном помещении."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">Ритуал</a>
-              </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>3&ndash;5&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Лёгкий
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/ghosts/ghosts-size-s.webp, img/content/ghosts/ghosts-size-s@2x.webp 2x"/>
-                <img src="img/content/ghosts/ghosts-size-s.jpg" srcSet="img/content/ghosts/ghosts-size-s@2x.jpg 2x" width="344" height="232" alt="Силует девушки за стеклом."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">История призраков</a>
-              </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>5&ndash;6&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Лёгкий
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/palace/palace-size-s.webp, img/content/palace/palace-size-s@2x.webp 2x"/>
-                <img src="img/content/palace/palace-size-s.jpg" srcSet="img/content/palace/palace-size-s@2x.jpg 2x" width="344" height="232" alt="Замок на возвышенности."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">Тайны старого особняка</a>
-              </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>2&ndash;3&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Лёгкий
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="quest-card">
-            <div className="quest-card__img">
-              <picture>
-                <source type="image/webp" srcSet="img/content/hut/hut-size-s.webp, img/content/hut/hut-size-s@2x.webp 2x"/>
-                <img src="img/content/hut/hut-size-s.jpg" srcSet="img/content/hut/hut-size-s@2x.jpg 2x" width="344" height="232" alt="Череп животного в руках девушки."/>
-              </picture>
-            </div>
-            <div className="quest-card__content">
-              <div className="quest-card__info-wrapper"><a className="quest-card__link" href="quest.html">Хижина в&nbsp;лесу</a>
-              </div>
-              <ul className="tags quest-card__tags">
-                <li className="tags__item">
-                  <svg width="11" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-person"></use>
-                  </svg>4&ndash;7&nbsp;чел
-                </li>
-                <li className="tags__item">
-                  <svg width="14" height="14" aria-hidden="true">
-                    <use xlinkHref="#icon-level"></use>
-                  </svg>Средний
-                </li>
-              </ul>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </main>
