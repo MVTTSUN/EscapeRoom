@@ -5,7 +5,7 @@ import { AxiosInstance } from 'axios';
 import { removeToken, setToken } from '../services/token';
 import { UserData } from '../types/user-data';
 import { browserHistory } from '../utils/browser-history';
-import { QuestData } from '../types/quest-data';
+import { QuestBookingInfo, QuestData } from '../types/quest-data';
 
 const loginAction = createAsyncThunk<void, AuthData, {
   extra: AxiosInstance;
@@ -60,10 +60,32 @@ const getQuestAction = createAsyncThunk<QuestData, string, {
   }
 );
 
+const getQuestBookingInfoAction = createAsyncThunk<QuestBookingInfo[], string, {
+  extra: AxiosInstance;
+}>(
+  'data/getQuestBookingInfo',
+  async (id, { extra: api }) => {
+    const { data } = await api.get<QuestBookingInfo[]>(`${APIRoute.Quest}/${id}${APIRoute.Booking}`);
+
+    return data;
+  }
+);
+
+const postQuestBookingAction = createAsyncThunk<void, string, {
+  extra: AxiosInstance;
+}>(
+  'data/getQuestBookingInfo',
+  async (id, { extra: api }) => {
+    await api.post(`${APIRoute.Quest}/${id}${APIRoute.Booking}`);
+  }
+);
+
 export {
   loginAction,
   logoutAction,
   checkAuthAction,
   getQuestsAction,
-  getQuestAction
+  getQuestAction,
+  getQuestBookingInfoAction,
+  postQuestBookingAction
 };

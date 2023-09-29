@@ -1,8 +1,18 @@
-import { Link, useLocation } from 'react-router-dom';
-import { BrowserRoute } from '../../const';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { AuthStatus, BrowserRoute } from '../../const';
+import { useAppSelector } from '../../hooks/use-app-selector';
+import { getAuthStatus } from '../../store/auth-process/selectors';
+import { useAppDispatch } from '../../hooks/use-app-dispatch';
+import { logoutAction } from '../../store/api-actions';
 
 export function Header() {
+  const dispatch = useAppDispatch();
   const { pathname } = useLocation();
+  const authStatus = useAppSelector(getAuthStatus);
+
+  const logout = () => {
+    dispatch(logoutAction());
+  };
 
   return (
     <header className="header">
@@ -23,19 +33,23 @@ export function Header() {
         <nav className="main-nav header__main-nav">
           <ul className="main-nav__list">
             <li className="main-nav__item">
-              <Link className="link active" to="index.html">Квесты</Link>
+              <NavLink end className={({ isActive }) => (isActive ? 'link active' : 'link')} to={BrowserRoute.Main}>Квесты</NavLink>
             </li>
             <li className="main-nav__item">
-              <Link className="link" to="contacts.html">Контакты</Link>
+              <NavLink end className={({ isActive }) => (isActive ? 'link active' : 'link')} to={BrowserRoute.Contacts}>Контакты</NavLink>
             </li>
-            <li className="main-nav__item">
-              <Link className="link" to="my-quests.html">Мои бронирования</Link>
-            </li>
+            {authStatus === AuthStatus.Auth && (
+              <li className="main-nav__item">
+                <NavLink end className={({ isActive }) => (isActive ? 'link active' : 'link')} to="my-quests.html">Мои бронирования</NavLink>
+              </li>
+            )}
           </ul>
         </nav>
         <div className="header__side-nav">
-          <Link className="btn btn--accent header__side-item" to="#">Выйти</Link>
-          <Link className="link header__side-item header__phone-link" to="tel:88003335599">8 (000) 111-11-11</Link>
+          {pathname !== BrowserRoute.Login && (authStatus !== AuthStatus.Auth
+            ? (<Link className="btn header__side-item header__login-btn" to={BrowserRoute.Login}>Вход</Link>)
+            : (<button onClick={logout} className="btn btn--accent header__side-item">Выйти</button>))}
+          <a className="link header__side-item header__phone-link" href="tel:88003335599">8 (000) 111-11-11</a>
         </div>
       </div>
     </header>

@@ -1,14 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { LEVELS_QUESTS, NameSlice, TYPES_QUESTS } from '../../const';
-import { getQuestAction, getQuestsAction } from '../api-actions';
-import { QuestData } from '../../types/quest-data';
+import { getQuestAction, getQuestBookingInfoAction, getQuestsAction } from '../api-actions';
+import { QuestBookingInfo, QuestData } from '../../types/quest-data';
 
 const initialState = {
   typeQuest: TYPES_QUESTS[0].id,
   levelQuest: LEVELS_QUESTS[0].id,
   quests: [] as QuestData[],
   currentQuest: {} as QuestData,
-  isLoading: false
+  isLoading: false,
+  questBookingInfo: [] as QuestBookingInfo[],
 };
 
 const questsData = createSlice({
@@ -24,6 +25,12 @@ const questsData = createSlice({
     resetTypeAndLevel(state) {
       state.typeQuest = TYPES_QUESTS[0].id;
       state.levelQuest = LEVELS_QUESTS[0].id;
+    },
+    resetCurrentQuest(state) {
+      state.currentQuest = {} as QuestData;
+    },
+    resetQuestBookingInfo(state) {
+      state.questBookingInfo = [] as QuestBookingInfo[];
     }
   },
   extraReducers(builder) {
@@ -47,12 +54,22 @@ const questsData = createSlice({
       })
       .addCase(getQuestAction.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getQuestBookingInfoAction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getQuestBookingInfoAction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.questBookingInfo = action.payload;
+      })
+      .addCase(getQuestBookingInfoAction.rejected, (state) => {
+        state.isLoading = false;
       });
   }
 });
 
 const questsReducer = questsData.reducer;
 
-export const { setTypeQuest, setLevelQuest, resetTypeAndLevel } = questsData.actions;
+export const { setTypeQuest, setLevelQuest, resetTypeAndLevel, resetCurrentQuest, resetQuestBookingInfo } = questsData.actions;
 
 export { questsReducer };

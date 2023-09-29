@@ -9,7 +9,11 @@ const initialState = {
 const authProcess = createSlice({
   name: NameSlice.Auth,
   initialState,
-  reducers: {},
+  reducers: {
+    setAuthStatus(state, action) {
+      state.authStatus = action.payload as AuthStatus;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(loginAction.fulfilled, (state) => {
@@ -31,5 +35,7 @@ const authProcess = createSlice({
 });
 
 const authReducer = authProcess.reducer;
+
+export const { setAuthStatus } = authProcess.actions;
 
 export { authReducer };

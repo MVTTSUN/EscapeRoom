@@ -1,3 +1,5 @@
+import { BaseIconOptions } from 'leaflet';
+
 const TYPES_QUESTS = [
   {
     id: 'all',
@@ -71,12 +73,52 @@ enum APIRoute {
   Login = '/login',
   Logout = '/logout',
   Quest = '/quest',
+  Booking = '/booking',
 }
 
 enum BrowserRoute {
   Main = '/',
   Quest = '/quest',
+  Login = '/login',
+  Contacts = '/contacts',
+  Booking = '/booking',
   NotFound = '*',
+}
+
+const POSITION_CONTACTS_MAP: [number, number] = [59.968322, 30.317359];
+
+const DEFAULT_MARKER_ICON: BaseIconOptions = {
+  iconAnchor: [15, 45],
+  iconSize: [30, 45],
+  iconUrl: 'img/svg/pin-default.svg',
+};
+
+const ACTIVE_MARKER_ICON: BaseIconOptions = {
+  iconAnchor: [15, 45],
+  iconSize: [30, 45],
+  iconUrl: 'img/svg/pin-active.svg',
+};
+
+const LAYER_MAP = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+enum ErrorsForm {
+  Required = 'Поле обязательно для заполнения',
+  Agreement = 'Необходимо дать согласие на обработку персональных данных',
+  PasswordMin = 'Минимальное количество символов - 3',
+  PasswordMax = 'Минимальное количество символов - 15',
+  Password = 'Пароль должен содержать буквы и цифры',
+  Email = 'Неправильный формат электронной почты',
+}
+
+enum InputName {
+  Email = 'email',
+  Password = 'password',
+  Agreement = 'agreement',
+  Date = 'date',
+  Name = 'name',
+  Tel = 'tel',
+  Person = 'person',
+  Children = 'children',
 }
 
 export {
@@ -85,8 +127,14 @@ export {
   BASE_URL,
   REQUEST_TIMEOUT,
   AUTH_TOKEN_NAME,
+  POSITION_CONTACTS_MAP,
+  DEFAULT_MARKER_ICON,
+  ACTIVE_MARKER_ICON,
+  LAYER_MAP,
   AuthStatus,
   NameSlice,
   APIRoute,
-  BrowserRoute
+  BrowserRoute,
+  ErrorsForm,
+  InputName
 };

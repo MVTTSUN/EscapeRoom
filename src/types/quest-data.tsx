@@ -5,10 +5,28 @@ type QuestData = {
   previewImgWebp: string;
   level: 'easy' | 'medium' | 'hard';
   type: 'adventures' | 'horror' | 'mystic' | 'detective' | 'sci-fi';
-  peopleMinMax: number[];
+  peopleMinMax: [number, number];
   description: undefined | string;
   coverImg: undefined | string;
   coverImgWebp: undefined | string;
 }
 
-export type { QuestData };
+type QuestBookingInfo = {
+  id: string;
+  location: {
+    address: string;
+    coords: [number, number];
+  };
+  slots: {
+    today: [{
+      time: string;
+      isAvailable: boolean;
+    }];
+    tomorrow: [{
+      time: string;
+      isAvailable: boolean;
+    }];
+  };
+}
+
+export type { QuestData, QuestBookingInfo };

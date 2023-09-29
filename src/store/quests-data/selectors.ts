@@ -15,5 +15,6 @@ const getFilteredQuests = createSelector(
       (typeQuest === TYPES_QUESTS[0].id || quest.type === typeQuest)
       && (levelQuest === LEVELS_QUESTS[0].id || quest.level === levelQuest))
 );
+const getQuestBookingInfo = (state: Pick<State, NameSlice.Quests>) => state[NameSlice.Quests].questBookingInfo;
 
-export { getQuests, getCurrentQuest, getFilteredQuests, getIsLoading, getTypeQuest, getLevelQuest };
+export { getQuests, getCurrentQuest, getFilteredQuests, getIsLoading, getTypeQuest, getLevelQuest, getQuestBookingInfo };
