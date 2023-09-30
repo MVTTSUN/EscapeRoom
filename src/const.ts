@@ -58,33 +58,6 @@ const BASE_URL = 'https://grading.design.pages.academy/v1/escape-room';
 
 const REQUEST_TIMEOUT = 5000;
 
-enum AuthStatus {
-  Auth = 'AUTH',
-  NoAuth = 'NO_AUTH',
-  Unknown = 'UNKNOWN',
-}
-
-enum NameSlice {
-  Auth = 'AUTH',
-  Quests = 'QUESTS',
-}
-
-enum APIRoute {
-  Login = '/login',
-  Logout = '/logout',
-  Quest = '/quest',
-  Booking = '/booking',
-}
-
-enum BrowserRoute {
-  Main = '/',
-  Quest = '/quest',
-  Login = '/login',
-  Contacts = '/contacts',
-  Booking = '/booking',
-  NotFound = '*',
-}
-
 const POSITION_CONTACTS_MAP: [number, number] = [59.968322, 30.317359];
 
 const DEFAULT_MARKER_ICON: BaseIconOptions = {
@@ -101,13 +74,45 @@ const ACTIVE_MARKER_ICON: BaseIconOptions = {
 
 const LAYER_MAP = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
+enum AuthStatus {
+  Auth = 'AUTH',
+  NoAuth = 'NO_AUTH',
+  Unknown = 'UNKNOWN',
+}
+
+enum NameSlice {
+  Auth = 'AUTH',
+  Quests = 'QUESTS',
+}
+
+enum APIRoute {
+  Login = '/login',
+  Logout = '/logout',
+  Quest = '/quest',
+  Booking = '/booking',
+  MyQuests = '/reservation'
+}
+
+enum BrowserRoute {
+  Main = '/',
+  Quest = '/quest',
+  MyQuests = '/my-quests',
+  Login = '/login',
+  Contacts = '/contacts',
+  Booking = '/booking',
+  NotFound = '*',
+}
+
 enum ErrorsForm {
   Required = 'Поле обязательно для заполнения',
   Agreement = 'Необходимо дать согласие на обработку персональных данных',
-  PasswordMin = 'Минимальное количество символов - 3',
-  PasswordMax = 'Минимальное количество символов - 15',
+  MinThreeWords = 'Минимальное количество символов - 3',
+  MaxFifteenWords = 'Минимальное количество символов - 15',
   Password = 'Пароль должен содержать буквы и цифры',
   Email = 'Неправильный формат электронной почты',
+  Tel = 'Неправильный формат телефона',
+  PersonMin = 'Минимальное количество человек - ',
+  PersonMax = 'Максимальное количество человек - ',
 }
 
 enum InputName {

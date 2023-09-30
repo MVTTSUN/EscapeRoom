@@ -14,16 +14,18 @@ import { PrivateRoute } from '../private-route/private-route';
 import { LoginPage } from '../../pages/login-page/login-page';
 import { useEffect } from 'react';
 import { useAppDispatch } from '../../hooks/use-app-dispatch';
-import { getToken } from '../../services/token';
-import { setAuthStatus } from '../../store/auth-process/auth-process';
+import { MyQuestsPage } from '../../pages/my-quests-page/my-quests-page';
+import { checkAuthAction } from '../../store/api-actions';
+import { getAuthStatus } from '../../store/auth-process/selectors';
 
 export function App() {
   const isLoading = useAppSelector(getIsLoading);
   const dispatch = useAppDispatch();
+  const authStatus = useAppSelector(getAuthStatus);
 
   useEffect(() => {
-    if (getToken()) {
-      dispatch(setAuthStatus(AuthStatus.Auth));
+    if (authStatus === AuthStatus.Auth) {
+      dispatch(checkAuthAction());
     }
   }, []);
 
@@ -40,6 +42,7 @@ export function App() {
           </Route>
           <Route path={BrowserRoute.Login} element={<PrivateRoute><LoginPage /></PrivateRoute>} />
           <Route path={BrowserRoute.Contacts} element={<ContactsPage />} />
+          <Route path={BrowserRoute.MyQuests} element={<PrivateRoute><MyQuestsPage /></PrivateRoute>} />
         </Route>
         <Route path={BrowserRoute.NotFound} element={<NotFoundPage />} />
       </Routes>

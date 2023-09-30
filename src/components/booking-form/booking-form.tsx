@@ -1,28 +1,58 @@
 import { QuestBookingInfo } from '../../types/quest-data';
 import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { useAppDispatch } from '../../hooks/use-app-dispatch';
+import { useAppDispatch } from '../../hooks/use-app-dispatch';
 import { Booking } from '../../types/forms';
 import { bookingSchema } from '../../utils/yup';
 import { InputName } from '../../const';
+import { useEffect, useState } from 'react';
+import { postQuestBookingAction } from '../../store/api-actions';
+import { useParams } from 'react-router-dom';
 
 type BookingFormProps = {
-  questBookingInfo: QuestBookingInfo | null;
+  questBookingInfo?: QuestBookingInfo | null;
+  peopleMinMax?: [number, number];
 };
 
 export function BookingForm(props: BookingFormProps) {
-  const { questBookingInfo } = props;
-  // const dispatch = useAppDispatch();
-  const { register, handleSubmit, formState: { errors, isValid} } = useForm<Booking>({
+  const { id } = useParams();
+  const { questBookingInfo, peopleMinMax } = props;
+  const [peopleMinMaxState, setPeopleMinMaxState] = useState<[number, number]>([0, 0]);
+  const dispatch = useAppDispatch();
+  const { register, reset, handleSubmit, formState: { errors, isValid} } = useForm<Booking>({
     mode: 'onChange',
-    resolver: yupResolver(bookingSchema) as unknown as Resolver<Booking>,
+    resolver: yupResolver(bookingSchema(peopleMinMaxState)) as unknown as Resolver<Booking>,
   });
 
   const onSubmit: SubmitHandler<Booking> = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    // dispatch(loginAction({ email, password}));
+    const date = data.date.includes('today') ? 'today' : 'tomorrow';
+    const time = data.date.replace(date, '').replace('h', ':').replace('m', '');
+
+    if (questBookingInfo && id) {
+      dispatch(postQuestBookingAction({
+        id,
+        data: {
+          date,
+          time,
+          contactPerson: data.name,
+          phone: data.tel,
+          withChildren: data.children,
+          peopleCount: Number(data.person),
+          placeId: questBookingInfo.id
+        }
+      }));
+    }
   };
+
+  useEffect(() => {
+    if (peopleMinMax) {
+      setPeopleMinMaxState(peopleMinMax);
+    }
+  }, [peopleMinMax]);
+
+  useEffect(() => {
+    reset();
+  }, [questBookingInfo]);
 
   return (
     <form className="booking-form" onSubmit={handleSubmit(onSubmit) as () => void}>
@@ -34,7 +64,7 @@ export function BookingForm(props: BookingFormProps) {
             {questBookingInfo?.slots.today.map((slot) => (
               <label key={`${slot.time}`} className="custom-radio booking-form__date">
                 <input
-                  disabled={slot.isAvailable}
+                  disabled={!slot.isAvailable}
                   type="radio"
                   id={`today${slot.time.split(':')[0]}h${slot.time.split(':')[1]}m`}
                   {...register(InputName.Date)}
@@ -51,7 +81,7 @@ export function BookingForm(props: BookingFormProps) {
             {questBookingInfo?.slots.tomorrow.map((slot) => (
               <label key={`${slot.time}`} className="custom-radio booking-form__date">
                 <input
-                  disabled={slot.isAvailable}
+                  disabled={!slot.isAvailable}
                   type="radio"
                   id={`tomorrow${slot.time.split(':')[0]}h${slot.time.split(':')[1]}m`}
                   {...register(InputName.Date)}
@@ -72,7 +102,7 @@ export function BookingForm(props: BookingFormProps) {
         </div>
         <div className="custom-input booking-form__input">
           <label className="custom-input__label" htmlFor="tel">Контактный телефон</label>
-          <input type="tel" id="tel" {...register(InputName.Tel)} placeholder="Телефон" pattern="[0-9]{10,}"/>
+          <input type="tel" id="tel" {...register(InputName.Tel)} placeholder="Телефон"/>
           <div className='custom-input__label'>{errors.tel?.message}</div>
         </div>
         <div className="custom-input booking-form__input">
@@ -101,8 +131,8 @@ export function BookingForm(props: BookingFormProps) {
         <span className="custom-checkbox__label">Я&nbsp;согласен с
           <a className="link link--active-silver link--underlined" href="*">правилами обработки персональных данных</a>&nbsp;и пользовательским соглашением
         </span>
-        <div className='custom-input__label'>{errors.agreement?.message}</div>
       </label>
+      <div className='custom-input__label'>{errors.agreement?.message}</div>
     </form>
   );
 }

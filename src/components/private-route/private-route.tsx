@@ -10,11 +10,11 @@ type PrivateRouteProps = {
 export function PrivateRoute(props: PrivateRouteProps) {
   const { children } = props;
   const authStatus = useAppSelector(getAuthStatus);
-  const { pathname } = useLocation();
+  const { pathname, key } = useLocation();
 
   if (authStatus === AuthStatus.Auth && pathname !== BrowserRoute.Login) {
     return children;
-  } else if (authStatus === AuthStatus.Auth && pathname === BrowserRoute.Login) {
+  } else if (authStatus === AuthStatus.Auth && pathname === BrowserRoute.Login && key === 'default') {
     return <Navigate to={BrowserRoute.Main} />;
   } else if (authStatus !== AuthStatus.Auth && pathname !== BrowserRoute.Login) {
     return <Navigate to={BrowserRoute.Login} />;

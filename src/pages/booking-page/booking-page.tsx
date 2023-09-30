@@ -19,7 +19,7 @@ export function BookingPage() {
   const [selectedQuestBookingInfo, setSelectedQuestBookingInfo] = useState<null | QuestBookingInfo>(null);
 
   useEffect(() => {
-    if (questBookingInfo.length !== 0) {
+    if (questBookingInfo !== undefined && questBookingInfo.length !== 0) {
       setSelectedQuestBookingInfo(questBookingInfo[0]);
     }
   }, [questBookingInfo]);
@@ -53,7 +53,7 @@ export function BookingPage() {
         <div className="page-content__item">
           <div className="booking-map">
             <div className="map">
-              {selectedQuestBookingInfo !== null && (
+              {selectedQuestBookingInfo !== null && questBookingInfo && (
                 <MapContainer className="map__container" center={[59.9386, 30.3141]} zoom={10}>
                   <TileLayer url={LAYER_MAP}/>
                   {questBookingInfo.map((place) => (
@@ -72,7 +72,7 @@ export function BookingPage() {
             <p className="booking-map__address">Вы&nbsp;выбрали: {selectedQuestBookingInfo?.location.address}</p>
           </div>
         </div>
-        <BookingForm questBookingInfo={selectedQuestBookingInfo} />
+        <BookingForm questBookingInfo={selectedQuestBookingInfo} peopleMinMax={currentQuest.peopleMinMax} />
       </div>
     </main>
   );

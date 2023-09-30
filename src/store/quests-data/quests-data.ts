@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { LEVELS_QUESTS, NameSlice, TYPES_QUESTS } from '../../const';
-import { getQuestAction, getQuestBookingInfoAction, getQuestsAction } from '../api-actions';
-import { QuestBookingInfo, QuestData } from '../../types/quest-data';
+import { getMyQuestsAction, getQuestAction, getQuestBookingInfoAction, getQuestsAction } from '../api-actions';
+import { MyQuest, QuestBookingInfo, QuestData } from '../../types/quest-data';
 
 const initialState = {
   typeQuest: TYPES_QUESTS[0].id,
@@ -10,6 +10,7 @@ const initialState = {
   currentQuest: {} as QuestData,
   isLoading: false,
   questBookingInfo: [] as QuestBookingInfo[],
+  myQuests: [] as MyQuest[],
 };
 
 const questsData = createSlice({
@@ -63,6 +64,16 @@ const questsData = createSlice({
         state.questBookingInfo = action.payload;
       })
       .addCase(getQuestBookingInfoAction.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(getMyQuestsAction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getMyQuestsAction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.myQuests = action.payload;
+      })
+      .addCase(getMyQuestsAction.rejected, (state) => {
         state.isLoading = false;
       });
   }

@@ -40,7 +40,7 @@ export function Header() {
             </li>
             {authStatus === AuthStatus.Auth && (
               <li className="main-nav__item">
-                <NavLink end className={({ isActive }) => (isActive ? 'link active' : 'link')} to="my-quests.html">Мои бронирования</NavLink>
+                <NavLink end className={({ isActive }) => (isActive ? 'link active' : 'link')} to={BrowserRoute.MyQuests}>Мои бронирования</NavLink>
               </li>
             )}
           </ul>

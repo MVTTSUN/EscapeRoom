@@ -9,7 +9,7 @@ type Booking = {
   name: string;
   tel: string;
   children: boolean;
-  person: number;
+  person: string;
   agreement: boolean;
 }
 

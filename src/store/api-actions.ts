@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { APIRoute } from '../const';
+import { APIRoute, BrowserRoute } from '../const';
 import { AuthData } from '../types/auth-data';
 import { AxiosInstance } from 'axios';
 import { removeToken, setToken } from '../services/token';
 import { UserData } from '../types/user-data';
 import { browserHistory } from '../utils/browser-history';
-import { QuestBookingInfo, QuestData } from '../types/quest-data';
+import { MyQuest, QuestBookingInfo, QuestData } from '../types/quest-data';
+import { BookingData } from '../types/booking-data';
 
 const loginAction = createAsyncThunk<void, AuthData, {
   extra: AxiosInstance;
@@ -15,7 +16,7 @@ const loginAction = createAsyncThunk<void, AuthData, {
     const { data: { token } } = await api.post<UserData>(APIRoute.Login, { email, password });
 
     setToken(token);
-    browserHistory.back();
+    browserHistory.go(-2);
   }
 );
 
@@ -71,12 +72,33 @@ const getQuestBookingInfoAction = createAsyncThunk<QuestBookingInfo[], string, {
   }
 );
 
-const postQuestBookingAction = createAsyncThunk<void, string, {
+const postQuestBookingAction = createAsyncThunk<void, {id: string; data: BookingData}, {
   extra: AxiosInstance;
 }>(
   'data/getQuestBookingInfo',
+  async ({ id, data }, { extra: api }) => {
+    await api.post(`${APIRoute.Quest}/${id}${APIRoute.Booking}`, data);
+    browserHistory.push(BrowserRoute.MyQuests);
+  }
+);
+
+const getMyQuestsAction = createAsyncThunk<MyQuest[], undefined, {
+  extra: AxiosInstance;
+}>(
+  'data/getMyQuests',
+  async (_, { extra: api }) => {
+    const { data } = await api.get<MyQuest[]>(APIRoute.MyQuests);
+
+    return data;
+  }
+);
+
+const deleteMyQuestAction = createAsyncThunk<void, string, {
+  extra: AxiosInstance;
+}>(
+  'data/deleteMyQuest',
   async (id, { extra: api }) => {
-    await api.post(`${APIRoute.Quest}/${id}${APIRoute.Booking}`);
+    await api.delete(`${APIRoute.MyQuests}/${id}`);
   }
 );
 
@@ -87,5 +109,7 @@ export {
   getQuestsAction,
   getQuestAction,
   getQuestBookingInfoAction,
-  postQuestBookingAction
+  postQuestBookingAction,
+  getMyQuestsAction,
+  deleteMyQuestAction
 };
