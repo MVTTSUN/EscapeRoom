@@ -8,15 +8,15 @@ import { browserHistory } from '../utils/browser-history';
 import { MyQuest, QuestBookingInfo, QuestData } from '../types/quest-data';
 import { BookingData } from '../types/booking-data';
 
-const loginAction = createAsyncThunk<void, AuthData, {
+const loginAction = createAsyncThunk<void, AuthData & { from: string }, {
   extra: AxiosInstance;
 }>(
   'auth/login',
-  async ({ email, password }, { extra: api }) => {
+  async ({ email, password, from }, { extra: api }) => {
     const { data: { token } } = await api.post<UserData>(APIRoute.Login, { email, password });
 
     setToken(token);
-    browserHistory.go(-2);
+    browserHistory.replace(from);
   }
 );
 

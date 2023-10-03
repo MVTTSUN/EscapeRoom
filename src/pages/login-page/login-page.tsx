@@ -5,8 +5,10 @@ import { loginSchema } from '../../utils/yup';
 import { InputName } from '../../const';
 import { loginAction } from '../../store/api-actions';
 import { useAppDispatch } from '../../hooks/use-app-dispatch';
+import { useLocation } from 'react-router-dom';
 
 export function LoginPage() {
+  const { state: { from }} = useLocation() as { state: { from: string } };
   const dispatch = useAppDispatch();
   const { register, handleSubmit, formState: { errors, isValid} } = useForm<Login>({
     defaultValues: {
@@ -19,7 +21,7 @@ export function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<Login> = ({ email, password }) => {
-    dispatch(loginAction({ email, password}));
+    dispatch(loginAction({ email, password, from}));
   };
 
   return (

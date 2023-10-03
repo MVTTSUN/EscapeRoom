@@ -15,9 +15,9 @@ export function PrivateRoute(props: PrivateRouteProps) {
   if (authStatus === AuthStatus.Auth && pathname !== BrowserRoute.Login) {
     return children;
   } else if (authStatus === AuthStatus.Auth && pathname === BrowserRoute.Login && key === 'default') {
-    return <Navigate to={BrowserRoute.Main} />;
+    return <Navigate to={BrowserRoute.Main} replace />;
   } else if (authStatus !== AuthStatus.Auth && pathname !== BrowserRoute.Login) {
-    return <Navigate to={BrowserRoute.Login} />;
+    return <Navigate to={BrowserRoute.Login} state={{ from: pathname }} replace />;
   } else {
     return children;
   }
